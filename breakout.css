@@ -9,6 +9,8 @@ body {
   box-sizing: border-box;
   background-color: black;
   border: 10px solid #d3d3d3;
-  width: 100%;
-  height: 100%;
+  /* so ball can fall down, exit from screen and game ends */
+  border-bottom: none;
+  width: 100vw;
+  height: 100vh;
 }
