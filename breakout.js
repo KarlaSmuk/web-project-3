@@ -79,8 +79,6 @@ function drawBricks() {
 }
 
 function drawBat() {
-  //canvas width to half and minus half bat width to be on center
-
   ctx.beginPath();
   ctx.rect(batX, batY, batWidth, batHeight);
   ctx.shadowBlur = 20;
@@ -91,10 +89,6 @@ function drawBat() {
 }
 
 function drawBall() {
-  //canvas width to half and minus half ball radius to be on center
-  ballX = canvas.width / 2 - ballRadius / 2;
-  ballY = canvas.height / 2;
-
   ctx.beginPath();
   ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
   ctx.fillStyle = "#FF0000";
@@ -134,8 +128,13 @@ function resizeCanvas() {
   canvas.height = window.innerHeight;
 
   //initial position of bat
+  //canvas width to half and minus half bat width to be on center
   batX = canvas.width / 2 - batWidth / 2;
   batY = canvas.height - 50;
+
+  //canvas width to half and minus half ball radius to be on center
+  ballX = canvas.width / 2 - ballRadius / 2;
+  ballY = canvas.height / 2;
 }
 
 window.addEventListener("resize", resizeCanvas);
