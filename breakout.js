@@ -7,8 +7,8 @@ let keyboardClicked = null;
 let ballX,
   ballY = 0;
 const ballRadius = 10;
-const velocityX = 2;
-const velocityY = -velocityX;
+let velocityX = 2;
+let velocityY = -velocityX;
 
 //bat parameters
 let batX,
@@ -118,6 +118,16 @@ function checkBallCollision() {
   //check if ball out of canvas
   if (ballY > canvas.height) {
     console.log("out of canvas");
+  }
+
+  // check if ball is in collision with bat
+  if (ballY > canvas.height - batHeight - 50 && ballX < batX + batWidth) {
+    velocityY = -velocityY; // change direction of ball
+  }
+
+  // check if ball is in collision with border of canvas
+  if (ballX + ballRadius > canvas.width) {
+    velocityX = -velocityX;
   }
 }
 
