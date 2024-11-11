@@ -80,8 +80,6 @@ function drawBricks() {
 
 function drawBat() {
   //canvas width to half and minus half bat width to be on center
-  batX = canvas.width / 2 - batWidth / 2;
-  batY = canvas.height - 50;
 
   ctx.beginPath();
   ctx.rect(batX, batY, batWidth, batHeight);
@@ -104,36 +102,43 @@ function drawBall() {
   ctx.closePath();
 }
 
-function startGame() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawBat();
-  drawBall();
-  drawBricks();
-}
-
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-
-  startGame();
-}
-
-window.addEventListener("resize", resizeCanvas);
-
 //keyboard click event
 window.addEventListener("keydown", (event) => {
   switch (event.key) {
     case "ArrowLeft":
-      keyboardClicked = "left";
+      if (batX > 0) {
+        batX -= 5;
+      }
       break;
     case "ArrowRight":
-      keyboardClicked = "right";
+      if (batX + batWidth < canvas.width) {
+        batX += 5;
+      }
       break;
     default:
       return;
   }
 });
 
-window.addEventListener("keyup", () => {
-  keyboardClicked = null;
-});
+function startGame() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawBat();
+  drawBall();
+  drawBricks();
+
+  requestAnimationFrame(startGame); //loop
+}
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  //initial position of bat
+  batX = canvas.width / 2 - batWidth / 2;
+  batY = canvas.height - 50;
+}
+
+window.addEventListener("resize", resizeCanvas);
+
+resizeCanvas();
+startGame();
