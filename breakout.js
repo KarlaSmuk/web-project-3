@@ -114,11 +114,24 @@ window.addEventListener("keydown", (event) => {
   }
 });
 
+function checkBallCollision() {
+  //check if ball out of canvas
+  if (ballY > canvas.height) {
+    console.log("out of canvas");
+  }
+}
+
 function startGame() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawBat();
   drawBall();
   drawBricks();
+
+  //move ball
+  ballX += velocityX;
+  ballY -= velocityY;
+
+  checkBallCollision();
 
   requestAnimationFrame(startGame); //loop
 }
@@ -133,10 +146,11 @@ function resizeCanvas() {
   batY = canvas.height - 50;
 
   //canvas width to half and minus half ball radius to be on center
-  ballX = canvas.width / 2 - ballRadius / 2;
-  ballY = canvas.height / 2;
+  ballX = canvas.width - 600;
+  ballY = canvas.height / 2 - 50;
 }
-
+//resize listener to auto refresh on resize
+//game start from beginning
 window.addEventListener("resize", resizeCanvas);
 
 resizeCanvas();
