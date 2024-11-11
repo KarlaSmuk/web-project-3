@@ -11,11 +11,12 @@ const velocityX = 2;
 const velocityY = -velocityX;
 
 //bat parameters
+let batX,
+  batY = 0;
 const batWidth = 100;
 const batHeight = 10;
 
 //initialize bricks
-
 const brickRows = 8;
 const brickColumns = 14;
 let brickWidth = canvas.width / brickColumns;
@@ -131,4 +132,8 @@ window.addEventListener("keydown", (event) => {
     default:
       return;
   }
+});
+
+window.addEventListener("keyup", () => {
+  keyboardClicked = null;
 });
