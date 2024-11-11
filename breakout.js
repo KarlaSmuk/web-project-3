@@ -1,6 +1,8 @@
 var c = document.getElementById("canvas");
 var ctx = c.getContext("2d");
 
+let keyboardClicked = null;
+
 //ball parameters
 let ballX,
   ballY = 0;
@@ -106,3 +108,17 @@ function resizeCanvas() {
 }
 
 window.addEventListener("resize", resizeCanvas);
+
+//keyboard click event
+window.addEventListener("keydown", (event) => {
+  switch (event.key) {
+    case "ArrowLeft":
+      keyboardClicked = "left";
+      break;
+    case "ArrowRight":
+      keyboardClicked = "right";
+      break;
+    default:
+      return;
+  }
+});
