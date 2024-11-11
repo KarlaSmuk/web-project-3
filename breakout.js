@@ -2,8 +2,8 @@ var c = document.getElementById("canvas");
 var ctx = c.getContext("2d");
 
 //ball parameters
-let ballX = canvas.width / 2;
-let ballY = canvas.height / 2;
+let ballX,
+  ballY = 0;
 const velocityX = 2;
 const velocityY = -velocityX;
 
@@ -25,8 +25,6 @@ function drawBall() {
 }
 
 function startGame() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
   drawBall();
 }
 
