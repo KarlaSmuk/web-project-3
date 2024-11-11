@@ -65,7 +65,25 @@ function drawBricks() {
   }
 }
 
+function drawBat() {
+  //canvas width to half and minus half bat width to be on center
+  batX = canvas.width / 2 - 50;
+  batY = canvas.height - 50;
+
+  ctx.beginPath();
+  ctx.rect(batX, batY, 100, 10);
+  ctx.shadowBlur = 20;
+  ctx.shadowColor = "black";
+  ctx.fillStyle = "#0077b6";
+  ctx.fill();
+  ctx.closePath();
+}
+
 function drawBall() {
+  //canvas width to half and minus half ball radius to be on center
+  ballX = canvas.width / 2 - 5;
+  ballY = canvas.height / 2;
+
   ctx.beginPath();
   ctx.arc(ballX, ballY, 10, 0, Math.PI * 2);
   ctx.fillStyle = "#FF0000";
@@ -75,6 +93,7 @@ function drawBall() {
 
 function startGame() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawBat();
   drawBall();
   drawBricks();
 }
@@ -82,9 +101,6 @@ function startGame() {
 function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-
-  ballX = canvas.width / 2;
-  ballY = canvas.height / 2;
 
   startGame();
 }
