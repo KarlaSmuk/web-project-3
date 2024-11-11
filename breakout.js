@@ -6,12 +6,21 @@ let keyboardClicked = null;
 //ball parameters
 let ballX,
   ballY = 0;
+const ballRadius = 10;
 const velocityX = 2;
 const velocityY = -velocityX;
 
+//bat parameters
+const batWidth = 100;
+const batHeight = 10;
+
 //initialize bricks
+
 const brickRows = 8;
 const brickColumns = 14;
+let brickWidth = canvas.width / brickColumns;
+const brickHeight = 20;
+
 let bricks = new Array();
 for (let i = 0; i < brickRows; i++) {
   //row array
@@ -51,12 +60,13 @@ function drawBricks() {
     for (let j = 0; j < brickColumns; j++) {
       if (bricks[i][j].draw == true) {
         //column width
-        const brickX = j * (canvas.width / brickColumns);
+        brickWidth = canvas.width / brickColumns;
+        const brickX = j * brickWidth;
         //row height
-        const brickY = i * 20;
+        const brickY = i * brickHeight;
 
         ctx.beginPath();
-        ctx.rect(brickX, brickY, canvas.width / brickColumns, 20);
+        ctx.rect(brickX, brickY, brickWidth, brickHeight);
         ctx.shadowBlur = 20;
         ctx.shadowColor = "black";
         ctx.fillStyle = getColor(i);
@@ -69,11 +79,11 @@ function drawBricks() {
 
 function drawBat() {
   //canvas width to half and minus half bat width to be on center
-  batX = canvas.width / 2 - 50;
+  batX = canvas.width / 2 - batWidth / 2;
   batY = canvas.height - 50;
 
   ctx.beginPath();
-  ctx.rect(batX, batY, 100, 10);
+  ctx.rect(batX, batY, batWidth, batHeight);
   ctx.shadowBlur = 20;
   ctx.shadowColor = "black";
   ctx.fillStyle = "#0077b6";
@@ -83,11 +93,11 @@ function drawBat() {
 
 function drawBall() {
   //canvas width to half and minus half ball radius to be on center
-  ballX = canvas.width / 2 - 5;
+  ballX = canvas.width / 2 - ballRadius / 2;
   ballY = canvas.height / 2;
 
   ctx.beginPath();
-  ctx.arc(ballX, ballY, 10, 0, Math.PI * 2);
+  ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
   ctx.fillStyle = "#FF0000";
   ctx.fill();
   ctx.closePath();
