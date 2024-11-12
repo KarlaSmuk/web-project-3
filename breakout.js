@@ -20,8 +20,8 @@ const batWidth = 100;
 const batHeight = 10;
 
 //initialize bricks
-const brickRows = 8;
-const brickColumns = 14;
+const brickRows = 1;
+const brickColumns = 2;
 let brickWidth = canvas.width / brickColumns;
 const brickHeight = 20;
 
@@ -57,6 +57,20 @@ function getColor(index) {
     default:
       return "#c1121f";
   }
+}
+
+function drawWin() {
+  ctx.font = "60px Arial";
+  ctx.fillStyle = "green";
+  ctx.textAlign = "center";
+  ctx.fillText("YOU WIN", canvas.width / 2, canvas.height / 2);
+}
+
+function drawGameOver() {
+  ctx.font = "60px Arial";
+  ctx.fillStyle = "red";
+  ctx.textAlign = "center";
+  ctx.fillText("GAME OVER", canvas.width / 2, canvas.height / 2);
 }
 
 function drawBricks() {
@@ -107,12 +121,12 @@ window.addEventListener("keydown", (event) => {
   switch (event.key) {
     case "ArrowLeft":
       if (batX > 0) {
-        batX -= 8;
+        batX -= 10;
       }
       break;
     case "ArrowRight":
       if (batX + batWidth < canvas.width) {
-        batX += 8;
+        batX += 10;
       }
       break;
     default:
@@ -123,15 +137,21 @@ window.addEventListener("keydown", (event) => {
 function checkBallCollision() {
   //check if ball out of canvas
   if (ballY > canvas.height) {
-    console.log("out of canvas");
+    drawGameOver();
+    stopAnimation();
+  }
+
+  if (points == brickRows * brickColumns) {
+    drawWin();
+    stopAnimation();
   }
 
   // check if ball is in collision with bat
   if (
     ballY > canvas.height - batHeight - 50 &&
     ballY < canvas.height - 50 &&
-    ballX < batX + batWidth &&
-    ballX > batX
+    ballX - ballRadius < batX + batWidth &&
+    ballX - ballRadius > batX
   ) {
     velocityY = -velocityY;
   }
@@ -143,6 +163,9 @@ function checkBallCollision() {
   } else if (ballX - ballRadius < 0) {
     //left side
     velocityX = -velocityX;
+  } else if (ballY - ballRadius <= 0) {
+    //top
+    velocityY = -velocityY;
   }
 
   //check if ball is in collision with brick
@@ -175,6 +198,11 @@ function checkBallCollision() {
   }
 }
 
+function stopAnimation() {
+  isAnimating = false;
+}
+let isAnimating = true;
+
 function startGame() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawBat();
@@ -186,8 +214,9 @@ function startGame() {
   ballY += velocityY;
 
   checkBallCollision();
-
-  requestAnimationFrame(startGame); //loop
+  if (isAnimating) {
+    requestAnimationFrame(startGame); //loop
+  }
 }
 
 function resizeCanvas() {
