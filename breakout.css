@@ -10,7 +10,7 @@ body {
   background-color: black;
   border: 10px solid #d3d3d3;
   /* so ball can fall down, exit from screen and game ends */
-  border-bottom: none;
+  /* border-bottom: none; */
   width: 100vw;
   height: 100vh;
 }

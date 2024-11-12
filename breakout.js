@@ -7,8 +7,11 @@ let keyboardClicked = null;
 let ballX,
   ballY = 0;
 const ballRadius = 10;
-let velocityX = 2;
-let velocityY = -velocityX;
+// let velocityX = 2.5;
+// let velocityY = -velocityX;
+let angle = (Math.random() * Math.PI) / 4 + Math.PI / 8;
+let velocityX = 3 * Math.cos(angle);
+let velocityY = -3 * Math.sin(angle);
 
 //bat parameters
 let batX,
@@ -28,7 +31,7 @@ for (let i = 0; i < brickRows; i++) {
   bricks[i] = new Array();
   for (let j = 0; j < brickColumns; j++) {
     //column in row
-    bricks[i].push({ draw: true });
+    bricks[i].push({ x: 0, y: 0, draw: true });
   }
 }
 
@@ -66,6 +69,9 @@ function drawBricks() {
         //row height
         const brickY = i * brickHeight;
 
+        bricks[i][j].x = brickX;
+        bricks[i][j].y = brickY;
+
         ctx.beginPath();
         ctx.rect(brickX, brickY, brickWidth, brickHeight);
         ctx.shadowBlur = 20;
@@ -83,7 +89,7 @@ function drawBat() {
   ctx.rect(batX, batY, batWidth, batHeight);
   ctx.shadowBlur = 20;
   ctx.shadowColor = "black";
-  ctx.fillStyle = "#0077b6";
+  ctx.fillStyle = "#d90429";
   ctx.fill();
   ctx.closePath();
 }
@@ -91,7 +97,7 @@ function drawBat() {
 function drawBall() {
   ctx.beginPath();
   ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
-  ctx.fillStyle = "#FF0000";
+  ctx.fillStyle = "#0077b6";
   ctx.fill();
   ctx.closePath();
 }
@@ -101,12 +107,12 @@ window.addEventListener("keydown", (event) => {
   switch (event.key) {
     case "ArrowLeft":
       if (batX > 0) {
-        batX -= 5;
+        batX -= 8;
       }
       break;
     case "ArrowRight":
       if (batX + batWidth < canvas.width) {
-        batX += 5;
+        batX += 8;
       }
       break;
     default:
@@ -121,13 +127,51 @@ function checkBallCollision() {
   }
 
   // check if ball is in collision with bat
-  if (ballY > canvas.height - batHeight - 50 && ballX < batX + batWidth) {
-    velocityY = -velocityY; // change direction of ball
+  if (
+    ballY > canvas.height - batHeight - 50 &&
+    ballY < canvas.height - 50 &&
+    ballX < batX + batWidth &&
+    ballX > batX
+  ) {
+    velocityY = -velocityY;
   }
 
   // check if ball is in collision with border of canvas
   if (ballX + ballRadius > canvas.width) {
+    //right side
     velocityX = -velocityX;
+  } else if (ballX - ballRadius < 0) {
+    //left side
+    velocityX = -velocityX;
+  }
+
+  //check if ball is in collision with brick
+  for (let i = 0; i < brickRows; i++) {
+    for (let j = 0; j < brickColumns; j++) {
+      const brick = bricks[i][j];
+      if (brick.draw == true) {
+        //check position of x
+        //start                 //end
+        if (
+          ballX - ballRadius > brick.x &&
+          ballX - ballRadius < brick.x + brickWidth
+        ) {
+          //check position of y
+          if (
+            ballY - ballRadius > brick.y &&
+            ballY - ballRadius < brick.y + brickHeight
+          ) {
+            brick.draw = false;
+            ++points;
+            velocityY = -velocityY;
+
+            if (points > localStorage.getItem("highestScore")) {
+              localStorage.setItem("highestScore", points);
+            }
+          }
+        }
+      }
+    }
   }
 }
 
@@ -139,7 +183,7 @@ function startGame() {
 
   //move ball
   ballX += velocityX;
-  ballY -= velocityY;
+  ballY += velocityY;
 
   checkBallCollision();
 
@@ -155,9 +199,9 @@ function resizeCanvas() {
   batX = canvas.width / 2 - batWidth / 2;
   batY = canvas.height - 50;
 
-  //canvas width to half and minus half ball radius to be on center
-  ballX = canvas.width - 600;
-  ballY = canvas.height / 2 - 50;
+  //center of bat
+  ballX = batX + batWidth / 2;
+  ballY = batY - batHeight;
 }
 //resize listener to auto refresh on resize
 //game start from beginning
