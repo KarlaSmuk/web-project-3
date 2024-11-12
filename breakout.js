@@ -7,17 +7,15 @@ let keyboardClicked = null;
 let ballX,
   ballY = 0;
 const ballRadius = 10;
-// let velocityX = 2.5;
-// let velocityY = -velocityX;
 let angle = (Math.random() * Math.PI) / 4 + Math.PI / 8;
-let velocityX = 0.5 * Math.cos(angle);
-let velocityY = -0.5 * Math.sin(angle);
+let velocityX = 3 * Math.cos(angle);
+let velocityY = -3 * Math.sin(angle);
 
 //bat parameters
 let batX,
   batY = 0;
 const batWidth = 100;
-const batHeight = 10;
+const batHeight = 30;
 
 //initialize bricks
 const brickRows = 8;
@@ -159,12 +157,29 @@ function checkBallCollision() {
 
   // check if ball is in collision with bat
   if (
-    ballY > canvas.height - batHeight - 50 &&
-    ballY < canvas.height - 50 &&
-    ballX - ballRadius < batX + batWidth &&
-    ballX - ballRadius > batX
+    //ball towards bat
+    ballX + ballRadius > batX && //left edge of bat
+    ballX - ballRadius < batX + batWidth && //right edge of bat
+    ballY + ballRadius > batY && // bottom edge of brick
+    ballY - ballRadius < batY + batHeight //  top edge of brick
   ) {
-    velocityY = -velocityY;
+    const hitFromLeft = ballX + ballRadius > batX && ballX < batX; // Left
+    const hitFromRight =
+      ballX - ballRadius < batX + batWidth && ballX > batX + batWidth; // Right 
+    const hitFromTop = ballY < batY; // Top 
+    console.log("top ", hitFromTop);
+    console.log("left ", hitFromLeft);
+    console.log("right ", hitFromRight);
+    console.log("bottom ", hitFromBottom);
+
+    if (hitFromTop) {
+      velocityY = -velocityY;
+    }
+
+    if ((hitFromLeft || hitFromRight) && !hitFromTop) {
+      velocityX = -velocityX;
+      ballX = ballX + ballRadius;
+    }
   }
 
   // check if ball is in collision with border of canvas
