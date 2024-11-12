@@ -10,8 +10,8 @@ const ballRadius = 10;
 // let velocityX = 2.5;
 // let velocityY = -velocityX;
 let angle = (Math.random() * Math.PI) / 4 + Math.PI / 8;
-let velocityX = 3 * Math.cos(angle);
-let velocityY = -3 * Math.sin(angle);
+let velocityX = 0.5 * Math.cos(angle);
+let velocityY = -0.5 * Math.sin(angle);
 
 //bat parameters
 let batX,
@@ -20,8 +20,8 @@ const batWidth = 100;
 const batHeight = 10;
 
 //initialize bricks
-const brickRows = 1;
-const brickColumns = 2;
+const brickRows = 8;
+const brickColumns = 14;
 let brickWidth = canvas.width / brickColumns;
 const brickHeight = 20;
 
@@ -73,6 +73,17 @@ function drawGameOver() {
   ctx.fillText("GAME OVER", canvas.width / 2, canvas.height / 2);
 }
 
+function drawScore() {
+  ctx.font = "16px Arial";
+  ctx.fillStyle = "#0077b6";
+  ctx.fillText("Score: " + points, canvas.width - 120, 30);
+  ctx.fillText(
+    "Max Score: " + brickRows * brickColumns,
+    canvas.width - 120,
+    50
+  );
+}
+
 function drawBricks() {
   for (let i = 0; i < brickRows; i++) {
     for (let j = 0; j < brickColumns; j++) {
@@ -81,7 +92,7 @@ function drawBricks() {
         brickWidth = canvas.width / brickColumns;
         const brickX = j * brickWidth;
         //row height
-        const brickY = i * brickHeight;
+        const brickY = i * brickHeight + 100;
 
         bricks[i][j].x = brickX;
         bricks[i][j].y = brickY;
@@ -121,12 +132,12 @@ window.addEventListener("keydown", (event) => {
   switch (event.key) {
     case "ArrowLeft":
       if (batX > 0) {
-        batX -= 10;
+        batX -= 13;
       }
       break;
     case "ArrowRight":
       if (batX + batWidth < canvas.width) {
-        batX += 10;
+        batX += 13;
       }
       break;
     default:
@@ -136,7 +147,7 @@ window.addEventListener("keydown", (event) => {
 
 function checkBallCollision() {
   //check if ball out of canvas
-  if (ballY > canvas.height) {
+  if (ballY - ballRadius > canvas.height) {
     drawGameOver();
     stopAnimation();
   }
@@ -169,6 +180,8 @@ function checkBallCollision() {
   }
 
   //check if ball is in collision with brick
+  //flag if ball have collision with two bricks
+  let checkVelocityChange = true;
   for (let i = 0; i < brickRows; i++) {
     for (let j = 0; j < brickColumns; j++) {
       const brick = bricks[i][j];
@@ -176,21 +189,20 @@ function checkBallCollision() {
         //check position of x
         //start                 //end
         if (
-          ballX - ballRadius > brick.x &&
-          ballX - ballRadius < brick.x + brickWidth
+          ballX + ballRadius >= brick.x && //left edge of brick
+          ballX - ballRadius <= brick.x + brickWidth && //right edge of brick
+          ballY + ballRadius >= brick.y && // bottom edge of brick
+          ballY - ballRadius <= brick.y + brickHeight //  top edge of brick
         ) {
-          //check position of y
-          if (
-            ballY - ballRadius > brick.y &&
-            ballY - ballRadius < brick.y + brickHeight
-          ) {
-            brick.draw = false;
-            ++points;
+          brick.draw = false;
+          ++points;
+          if (checkVelocityChange) {
             velocityY = -velocityY;
+            checkVelocityChange = false;
+          }
 
-            if (points > localStorage.getItem("highestScore")) {
-              localStorage.setItem("highestScore", points);
-            }
+          if (points > localStorage.getItem("highestScore")) {
+            localStorage.setItem("highestScore", points);
           }
         }
       }
@@ -205,6 +217,7 @@ let isAnimating = true;
 
 function startGame() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawScore();
   drawBat();
   drawBall();
   drawBricks();
