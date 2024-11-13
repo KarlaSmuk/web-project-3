@@ -161,29 +161,55 @@ function checkBallCollision() {
     stopAnimation();
   }
 
-  // check if ball is in collision with bat
-  if (
-    //ball towards bat
-    ballX + ballRadius > batX && //left edge of bat
-    ballX - ballRadius < batX + batWidth && //right edge of bat
-    ballY + ballRadius > batY && // bottom edge of brick
-    ballY - ballRadius < batY + batHeight //  top edge of brick
-  ) {
-    const hitFromLeft = ballX + ballRadius > batX && ballX < batX;
-    const hitFromRight =
-      ballX - ballRadius < batX + batWidth && ballX > batX + batWidth;
-    const hitFromTop = ballY < batY;
-    console.log("top ", hitFromTop);
-    console.log("left ", hitFromLeft);
-    console.log("right ", hitFromRight);
+  //check ball and bat collision
+  let closestX = ballX;
+  let closestY = ballY;
+  //check which edge is ball closest to
+  //x axis
+  //left right
+  if (ballX > batX + batWidth) {
+    closestX = batX + batWidth;
+  } else if (ballX < batX) {
+    closestX = batX;
+  }
+  //check which edge is ball closest to
+  //y axis
+  //left right
+  if (ballY > batY + batHeight) {
+    closestY = batY + batHeight;
+  } else if (ballY < batY) {
+    closestY = batY;
+  }
+  //distance between ball center and closest edge
+  let distanceX = closestX - ballX;
+  let distanceY = closestY - ballY;
+  let distance = Math.sqrt(Math.pow(distanceX, 2) + Math.pow(distanceY, 2));
+
+  //if the distance is less than the ball radius squared
+  //collision
+  if (distance <= ballRadius) {
+    const hitFromLeft = ballX < batX && distanceX >= 0;
+    const hitFromRight = ballX > batX + batWidth && distanceX <= 0;
+    const hitFromTop = ballY < batY && distanceY >= 0;
 
     //if hit from top change y velocity
-    if (hitFromTop && !hitFromLeft && !hitFromRight) {
+    if (hitFromTop) {
+      // Position it above the bat to not sticky to bat
+      ballY = batY - ballRadius;
       velocityY = -velocityY;
     }
 
     //if hit from side change x velocity
-    if ((hitFromLeft || hitFromRight) && !hitFromTop) {
+    if (
+      hitFromLeft ||
+      hitFromRight ||
+      (hitFromTop && hitFromLeft) ||
+      (hitFromTop && hitFromRight)
+    ) {
+      //prevent ball get inside bat when bat is moving
+      if (hitFromRight) ballX = batX + batWidth + ballRadius;
+      if (hitFromLeft) ballX = batX - ballRadius;
+      if (hitFromTop) ballY = batY - ballRadius;
       velocityX = -velocityX;
     }
   }
@@ -217,9 +243,7 @@ function checkBallCollision() {
         ) {
           brick.draw = false;
           ++points;
-          if (ballX + ballRadius >= brick.x) console.log("ball brick left");
-          if (ballX - ballRadius <= brick.x + brickWidth)
-            console.log("ball brick right");
+
           if (checkVelocityChange) {
             velocityY = -velocityY;
             checkVelocityChange = false;
