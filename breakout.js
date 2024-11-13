@@ -38,6 +38,7 @@ let points = 0;
 //highest score save to local storage
 let highestScore = localStorage.getItem("highestScore");
 
+//return color of brick depends of row index
 function getColor(index) {
   switch (index) {
     case 2:
@@ -76,6 +77,7 @@ function drawScore() {
   ctx.fillStyle = "#0077b6";
   ctx.fillText("Score: " + points, canvas.width - 120, 30);
   ctx.fillText(
+    //TODO: check if it is max or highest score
     "Max Score: " + brickRows * brickColumns,
     canvas.width - 120,
     50
@@ -87,6 +89,7 @@ function drawBricks() {
     for (let j = 0; j < brickColumns; j++) {
       if (bricks[i][j].draw == true) {
         //column width
+        //calculate brick width to fill entire canvas width
         brickWidth = canvas.width / brickColumns;
         const brickX = j * brickWidth;
         //row height
@@ -96,6 +99,7 @@ function drawBricks() {
         bricks[i][j].y = brickY;
 
         ctx.beginPath();
+        //x and y positions are from left and top edge of brick
         ctx.rect(brickX, brickY, brickWidth, brickHeight);
         ctx.shadowBlur = 20;
         ctx.shadowColor = "black";
@@ -109,6 +113,7 @@ function drawBricks() {
 
 function drawBat() {
   ctx.beginPath();
+  //x and y positions are from left and top edge of bat
   ctx.rect(batX, batY, batWidth, batHeight);
   ctx.shadowBlur = 20;
   ctx.shadowColor = "black";
@@ -119,6 +124,7 @@ function drawBat() {
 
 function drawBall() {
   ctx.beginPath();
+  //x and y positions are from the center of ball
   ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
   ctx.fillStyle = "#0077b6";
   ctx.fill();
@@ -163,31 +169,31 @@ function checkBallCollision() {
     ballY + ballRadius > batY && // bottom edge of brick
     ballY - ballRadius < batY + batHeight //  top edge of brick
   ) {
-    const hitFromLeft = ballX + ballRadius > batX && ballX < batX; // Left
+    const hitFromLeft = ballX + ballRadius > batX && ballX < batX;
     const hitFromRight =
-      ballX - ballRadius < batX + batWidth && ballX > batX + batWidth; // Right 
-    const hitFromTop = ballY < batY; // Top 
+      ballX - ballRadius < batX + batWidth && ballX > batX + batWidth;
+    const hitFromTop = ballY < batY;
     console.log("top ", hitFromTop);
     console.log("left ", hitFromLeft);
     console.log("right ", hitFromRight);
-    console.log("bottom ", hitFromBottom);
 
-    if (hitFromTop) {
+    //if hit from top change y velocity
+    if (hitFromTop && !hitFromLeft && !hitFromRight) {
       velocityY = -velocityY;
     }
 
+    //if hit from side change x velocity
     if ((hitFromLeft || hitFromRight) && !hitFromTop) {
       velocityX = -velocityX;
-      ballX = ballX + ballRadius;
     }
   }
 
   // check if ball is in collision with border of canvas
   if (ballX + ballRadius > canvas.width) {
-    //right side
+    //right
     velocityX = -velocityX;
   } else if (ballX - ballRadius < 0) {
-    //left side
+    //left
     velocityX = -velocityX;
   } else if (ballY - ballRadius <= 0) {
     //top
@@ -201,7 +207,7 @@ function checkBallCollision() {
     for (let j = 0; j < brickColumns; j++) {
       const brick = bricks[i][j];
       if (brick.draw == true) {
-        //check position of x
+        //check position of ball
         //start                 //end
         if (
           ballX + ballRadius >= brick.x && //left edge of brick
@@ -211,6 +217,9 @@ function checkBallCollision() {
         ) {
           brick.draw = false;
           ++points;
+          if (ballX + ballRadius >= brick.x) console.log("ball brick left");
+          if (ballX - ballRadius <= brick.x + brickWidth)
+            console.log("ball brick right");
           if (checkVelocityChange) {
             velocityY = -velocityY;
             checkVelocityChange = false;
@@ -228,6 +237,7 @@ function checkBallCollision() {
 function stopAnimation() {
   isAnimating = false;
 }
+
 let isAnimating = true;
 
 function startGame() {
