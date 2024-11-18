@@ -18,7 +18,7 @@ const batWidth = 100;
 const batHeight = 10;
 
 //initialize bricks
-const brickRows = 2; // less rows for easier testing
+const brickRows = 4; // less rows for easier testing
 const brickColumns = 14;
 let brickWidth = canvas.width / brickColumns;
 const brickHeight = 20;
