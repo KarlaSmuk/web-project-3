@@ -8,17 +8,17 @@ let ballX,
   ballY = 0;
 const ballRadius = 10;
 let angle = (Math.random() * Math.PI) / 4 + Math.PI / 8;
-let velocityX = 3 * Math.cos(angle);
-let velocityY = -3 * Math.sin(angle);
+let velocityX = 4 * Math.cos(angle);
+let velocityY = -4 * Math.sin(angle);
 
 //bat parameters
 let batX,
   batY = 0;
 const batWidth = 100;
-const batHeight = 30;
+const batHeight = 10;
 
 //initialize bricks
-const brickRows = 8;
+const brickRows = 2; // less rows for easier testing
 const brickColumns = 14;
 let brickWidth = canvas.width / brickColumns;
 const brickHeight = 20;
@@ -62,7 +62,7 @@ function drawWin() {
   ctx.font = "60px Arial";
   ctx.fillStyle = "green";
   ctx.textAlign = "center";
-  ctx.fillText("YOU WIN", canvas.width / 2, canvas.height / 2);
+  ctx.fillText("YOU W0N", canvas.width / 2, canvas.height / 2);
 }
 
 function drawGameOver() {
@@ -77,7 +77,10 @@ function drawScore() {
   ctx.fillStyle = "#0077b6";
   ctx.fillText("Score: " + points, canvas.width - 120, 30);
   ctx.fillText(
-    "Max Score: " + localStorage.getItem("highestScore"),
+    "Max Score: " +
+      (localStorage.getItem("highestScore") == null
+        ? 0
+        : localStorage.getItem("highestScore")),
     canvas.width - 120,
     50
   );
@@ -135,12 +138,12 @@ window.addEventListener("keydown", (event) => {
   switch (event.key) {
     case "ArrowLeft":
       if (batX > 0) {
-        batX -= 13;
+        batX -= 15;
       }
       break;
     case "ArrowRight":
       if (batX + batWidth < canvas.width) {
-        batX += 13;
+        batX += 15;
       }
       break;
     default:
@@ -287,7 +290,7 @@ function resizeCanvas() {
   //initial position of bat
   //canvas width to half and minus half bat width to be on center
   batX = canvas.width / 2 - batWidth / 2;
-  batY = canvas.height - 50;
+  batY = canvas.height - batHeight * 2;
 
   //center of bat
   ballX = batX + batWidth / 2;
