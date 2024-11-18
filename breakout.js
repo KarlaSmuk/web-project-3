@@ -77,8 +77,7 @@ function drawScore() {
   ctx.fillStyle = "#0077b6";
   ctx.fillText("Score: " + points, canvas.width - 120, 30);
   ctx.fillText(
-    //TODO: check if it is max or highest score
-    "Max Score: " + brickRows * brickColumns,
+    "Max Score: " + localStorage.getItem("highestScore"),
     canvas.width - 120,
     50
   );
